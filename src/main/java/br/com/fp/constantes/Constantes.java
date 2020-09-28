@@ -4,6 +4,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Constantes {
+	
+	public static final long INTERVALO = 10000L;
+	
 	public static final String CTE_LINHA = "ç";
 	public static final String CTE_LISTA = ",";
 	public static final String CTE_ITEM = "-";

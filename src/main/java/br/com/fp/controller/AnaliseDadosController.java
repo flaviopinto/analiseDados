@@ -23,7 +23,7 @@ public class AnaliseDadosController {
 	@Autowired
 	private AnaliseDadosService service;
 
-	@Scheduled(fixedDelay = 5000)
+	@Scheduled(fixedDelay = Constantes.INTERVALO)
 	public void processar() {
 
 		try {
