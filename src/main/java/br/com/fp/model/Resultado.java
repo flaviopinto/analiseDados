@@ -9,15 +9,15 @@ public class Resultado extends Base implements Serializable {
 	private Integer quantidadeClientes;
 	private Integer quantidadeVendedores;
 	private Integer idMaiorVenda;
-	private String nomePiorvendedor;
+	private String nomePiorVendedor;
 	
 	public Resultado(Integer quantidadeClientes, Integer quantidadeVendedores, Integer idMaiorVenda,
-			String nomePiorvendedor) {
+			String nomePiorVendedor) {
 		super();
 		this.quantidadeClientes = quantidadeClientes;
 		this.quantidadeVendedores = quantidadeVendedores;
 		this.idMaiorVenda = idMaiorVenda;
-		this.nomePiorvendedor = nomePiorvendedor;
+		this.nomePiorVendedor = nomePiorVendedor;
 	}
 	
 	public Integer getQuantidadeClientes() {
@@ -38,11 +38,11 @@ public class Resultado extends Base implements Serializable {
 	public void setIdMaiorVenda(Integer idMaiorVenda) {
 		this.idMaiorVenda = idMaiorVenda;
 	}
-	public String getNomePiorvendedor() {
-		return nomePiorvendedor;
+	public String getNomePiorVendedor() {
+		return nomePiorVendedor;
 	}
-	public void setNomePiorvendedor(String nomePiorvendedor) {
-		this.nomePiorvendedor = nomePiorvendedor;
+	public void setNomePiorVendedor(String nomePiorVendedor) {
+		this.nomePiorVendedor = nomePiorVendedor;
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public class Resultado extends Base implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((idMaiorVenda == null) ? 0 : idMaiorVenda.hashCode());
-		result = prime * result + ((nomePiorvendedor == null) ? 0 : nomePiorvendedor.hashCode());
+		result = prime * result + ((nomePiorVendedor == null) ? 0 : nomePiorVendedor.hashCode());
 		result = prime * result + ((quantidadeClientes == null) ? 0 : quantidadeClientes.hashCode());
 		result = prime * result + ((quantidadeVendedores == null) ? 0 : quantidadeVendedores.hashCode());
 		return result;
@@ -70,10 +70,10 @@ public class Resultado extends Base implements Serializable {
 				return false;
 		} else if (!idMaiorVenda.equals(other.idMaiorVenda))
 			return false;
-		if (nomePiorvendedor == null) {
-			if (other.nomePiorvendedor != null)
+		if (nomePiorVendedor == null) {
+			if (other.nomePiorVendedor != null)
 				return false;
-		} else if (!nomePiorvendedor.equals(other.nomePiorvendedor))
+		} else if (!nomePiorVendedor.equals(other.nomePiorVendedor))
 			return false;
 		if (quantidadeClientes == null) {
 			if (other.quantidadeClientes != null)
@@ -91,7 +91,7 @@ public class Resultado extends Base implements Serializable {
 	@Override
 	public String toString() {
 		return "Resultado [quantidadeClientes=" + quantidadeClientes + ", quantidadeVendedores=" + quantidadeVendedores
-				+ ", idMaiorVenda=" + idMaiorVenda + ", nomePiorvendedor=" + nomePiorvendedor + "]";
+				+ ", idMaiorVenda=" + idMaiorVenda + ", nomePiorVendedor=" + nomePiorVendedor + "]";
 	}
 		
 }
