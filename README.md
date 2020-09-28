@@ -57,7 +57,7 @@ Executar a aplicação com uma IDE
     docker build -t analisedados .
     docker run --name testeapi analisedados 
     ```
-4) Em outro terminal
+4) Adicionar Arquivo (Em outro terminal)
     ```
     ##Adicionar arquivo da máquina local para o container (/home/data/in -> Configurado na classe Constantes.java)
     docker cp C:\meu_local_entrada\nome_arquivo.txt testeapi:/home/data/in 
