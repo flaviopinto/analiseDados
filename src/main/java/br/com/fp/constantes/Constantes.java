@@ -7,6 +7,8 @@ public class Constantes {
 	
 	public static final long INTERVALO = 10000L;
 	
+	public static final String NAO_IDENTIFICADO = "Não Identificado";
+	
 	public static final String CTE_LINHA = "ç";
 	public static final String CTE_LISTA = ",";
 	public static final String CTE_ITEM = "-";

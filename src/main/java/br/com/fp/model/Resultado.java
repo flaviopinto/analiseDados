@@ -1,58 +1,116 @@
 package br.com.fp.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import br.com.fp.constantes.Constantes;
+import br.com.fp.util.Util;
 
 public class Resultado extends Base implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Integer quantidadeClientes;
-	private Integer quantidadeVendedores;
-	private Integer idMaiorVenda;
-	private String nomePiorVendedor;
+	private Integer totalClientes;
+	private Integer totalVendedores;
+	private Venda maiorVenda;
+	private Map<String, BigDecimal> mapaVendedorValor;
 	
-	public Resultado(Integer quantidadeClientes, Integer quantidadeVendedores, Integer idMaiorVenda,
-			String nomePiorVendedor) {
+	public Resultado() {
 		super();
-		this.quantidadeClientes = quantidadeClientes;
-		this.quantidadeVendedores = quantidadeVendedores;
-		this.idMaiorVenda = idMaiorVenda;
-		this.nomePiorVendedor = nomePiorVendedor;
+	}
+
+	public Resultado(Integer totalClientes, Integer totalVendedores, Venda maiorVenda,
+			Map<String, BigDecimal> mapaVendedorValor) {
+		super();
+		this.totalClientes = totalClientes;
+		this.totalVendedores = totalVendedores;
+		this.maiorVenda = maiorVenda;
+		this.mapaVendedorValor = mapaVendedorValor;
+	}
+
+	public Integer getTotalClientes() {
+		return totalClientes;
+	}
+
+	public Integer getTotalVendedores() {
+		return totalVendedores;
+	}
+
+	public Venda getMaiorVenda() {
+		return maiorVenda;
 	}
 	
-	public Integer getQuantidadeClientes() {
-		return quantidadeClientes;
-	}
-	public void setQuantidadeClientes(Integer quantidadeClientes) {
-		this.quantidadeClientes = quantidadeClientes;
-	}
-	public Integer getQuantidadeVendedores() {
-		return quantidadeVendedores;
-	}
-	public void setQuantidadeVendedores(Integer quantidadeVendedores) {
-		this.quantidadeVendedores = quantidadeVendedores;
-	}
-	public Integer getIdMaiorVenda() {
-		return idMaiorVenda;
-	}
-	public void setIdMaiorVenda(Integer idMaiorVenda) {
-		this.idMaiorVenda = idMaiorVenda;
-	}
-	public String getNomePiorVendedor() {
-		return nomePiorVendedor;
-	}
-	public void setNomePiorVendedor(String nomePiorVendedor) {
-		this.nomePiorVendedor = nomePiorVendedor;
+	public String getIdMaiorVenda() {
+		if(getMaiorVenda() == null) {
+			return Constantes.NAO_IDENTIFICADO;
+		}
+		return getMaiorVenda().getId().toString();
 	}
 	
+	public String getPiorVendedor() {
+		if (mapaVendedorValor == null) {
+			return Constantes.NAO_IDENTIFICADO;
+		}
+		return Collections.min(mapaVendedorValor.entrySet(), Comparator.comparing(Entry::getValue)).getKey();
+	}
+
+	public void incrementarVendedor() {
+		if(totalVendedores == null) {
+			totalVendedores = 0;
+		}
+		totalVendedores++;
+	}
+	
+	public void incrementarCliente() {
+		if(totalClientes == null) {
+			totalClientes = 0;
+		}
+		totalClientes++;
+	}
+	
+	public void processarVenda(Venda venda) {
+		manterMaiorVenda(venda);
+		preencherMapaValorPorVendedor(venda);
+	}
+	
+	private void manterMaiorVenda(Venda venda) {
+		if (Util.verificarMaiorVenda(maiorVenda, venda)) {
+			maiorVenda = venda;
+		}
+	}
+	
+	private void preencherMapaValorPorVendedor(Venda venda) {
+		if (mapaVendedorValor == null) {
+			mapaVendedorValor = new HashMap<String, BigDecimal>();
+		}
+		
+		if(mapaVendedorValor.containsKey(venda.getNomeVendedor())) {
+			mapaVendedorValor.put(venda.getNomeVendedor(), mapaVendedorValor.get(venda.getNomeVendedor()).add(venda.getTotalVenda()));
+		} else {
+			mapaVendedorValor.put(venda.getNomeVendedor(), venda.getTotalVenda());
+		}
+	}
+	
+	public String getArquivoProcessado() {
+		return "Resultado [Total Clientes = " + (getTotalClientes() == null ? Constantes.NAO_IDENTIFICADO : getTotalClientes())
+			+ ", Total Vendedores = " + (getTotalVendedores() == null ? Constantes.NAO_IDENTIFICADO : getTotalVendedores())
+			+ ", Id Maior Venda = " + getIdMaiorVenda()
+			+ ", Pior Vendedor = " + getPiorVendedor() + "]";
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((idMaiorVenda == null) ? 0 : idMaiorVenda.hashCode());
-		result = prime * result + ((nomePiorVendedor == null) ? 0 : nomePiorVendedor.hashCode());
-		result = prime * result + ((quantidadeClientes == null) ? 0 : quantidadeClientes.hashCode());
-		result = prime * result + ((quantidadeVendedores == null) ? 0 : quantidadeVendedores.hashCode());
+		result = prime * result + ((mapaVendedorValor == null) ? 0 : mapaVendedorValor.hashCode());
+		result = prime * result + ((maiorVenda == null) ? 0 : maiorVenda.hashCode());
+		result = prime * result + ((totalClientes == null) ? 0 : totalClientes.hashCode());
+		result = prime * result + ((totalVendedores == null) ? 0 : totalVendedores.hashCode());
 		return result;
 	}
 
@@ -65,33 +123,27 @@ public class Resultado extends Base implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Resultado other = (Resultado) obj;
-		if (idMaiorVenda == null) {
-			if (other.idMaiorVenda != null)
+		if (mapaVendedorValor == null) {
+			if (other.mapaVendedorValor != null)
 				return false;
-		} else if (!idMaiorVenda.equals(other.idMaiorVenda))
+		} else if (!mapaVendedorValor.equals(other.mapaVendedorValor))
 			return false;
-		if (nomePiorVendedor == null) {
-			if (other.nomePiorVendedor != null)
+		if (maiorVenda == null) {
+			if (other.maiorVenda != null)
 				return false;
-		} else if (!nomePiorVendedor.equals(other.nomePiorVendedor))
+		} else if (!maiorVenda.equals(other.maiorVenda))
 			return false;
-		if (quantidadeClientes == null) {
-			if (other.quantidadeClientes != null)
+		if (totalClientes == null) {
+			if (other.totalClientes != null)
 				return false;
-		} else if (!quantidadeClientes.equals(other.quantidadeClientes))
+		} else if (!totalClientes.equals(other.totalClientes))
 			return false;
-		if (quantidadeVendedores == null) {
-			if (other.quantidadeVendedores != null)
+		if (totalVendedores == null) {
+			if (other.totalVendedores != null)
 				return false;
-		} else if (!quantidadeVendedores.equals(other.quantidadeVendedores))
+		} else if (!totalVendedores.equals(other.totalVendedores))
 			return false;
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "Resultado [quantidadeClientes=" + quantidadeClientes + ", quantidadeVendedores=" + quantidadeVendedores
-				+ ", idMaiorVenda=" + idMaiorVenda + ", nomePiorVendedor=" + nomePiorVendedor + "]";
-	}
-		
 }
