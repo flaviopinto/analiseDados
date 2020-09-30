@@ -1,11 +1,12 @@
 package br.com.fp.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,22 +54,29 @@ public class AnaliseDadosController {
 	private void processarArquivo(File file) {
 		System.out.println("processando arquivo: " + file.getAbsolutePath());
 		try {
-			Resultado resultado = service.processarLinhas(obterLinhasPorArquivo(file.getAbsolutePath()));
-			Files.write(Paths.get(Constantes.PATH_SAIDA + File.separator + file.getName()), 
-					resultado.toString().getBytes());
+			if (!Files.isReadable(Paths.get(file.getAbsolutePath()))) {
+				throw new AplicacaoException("Erro ao ler o diretório: " + file.getAbsolutePath());
+			}
 			
+			processarArquivoPorLinha(file);
 		} catch (IOException e) {
 			System.out.println("Erro ao processar arquivo: " + file.getAbsolutePath());
 		} catch (AplicacaoException e) {
 			System.out.println(e.getMessage() + file.getAbsolutePath());
 		}
 	}
-	
-	public List<String> obterLinhasPorArquivo(String path) throws IOException, AplicacaoException {
-		if (!Files.isReadable(Paths.get(path))) {
-			throw new AplicacaoException("Erro ao ler o diretório: " + path);
+
+	private void processarArquivoPorLinha(File file) throws IOException, AplicacaoException {
+		Resultado resultado = new Resultado();
+		try (Scanner scanner = new Scanner(new FileInputStream(file.getAbsoluteFile()))) {
+		    while (scanner.hasNextLine()) {
+		    	resultado = service.processarLinha(scanner.nextLine(), resultado);
+		    }
 		}
 		
-		return Files.readAllLines(Paths.get(path));
+		Files.deleteIfExists(file.toPath());
+		Files.write(Paths.get(Constantes.PATH_SAIDA + File.separator + file.getName()), 
+				resultado.getArquivoProcessado().getBytes());
 	}
+
 }

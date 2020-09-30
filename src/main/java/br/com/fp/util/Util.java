@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import br.com.fp.constantes.Constantes;
+import br.com.fp.exception.AplicacaoException;
 import br.com.fp.model.Cliente;
 import br.com.fp.model.Item;
 import br.com.fp.model.ItemQuantidade;
@@ -14,22 +16,32 @@ import br.com.fp.model.Vendedor;
 
 public class Util {
 	
-	public static Vendedor preencherVendedor(String linha, String string) {
-		String[] vetorObterCpf = linha.split(string, 2);
-		String[] vetorObterNome = vetorObterCpf[1].split(string);
+	public static Vendedor preencherVendedor(String linha, String caractereLinha) throws AplicacaoException {
+		String[] vetorObterCpf = linha.split(caractereLinha, 2);
+		String[] vetorObterNome = vetorObterCpf[1].split(caractereLinha);
+		
+		validarVetorNome(vetorObterNome);
 		
 		if(vetorObterNome.length == 2) {
 			return new Vendedor(vetorObterCpf[0], vetorObterNome[0], new BigDecimal(vetorObterNome[1]));
 		}
 		
 		return new Vendedor(vetorObterCpf[0], 
-				obterNome(string, vetorObterNome), 
+				obterNome(caractereLinha, vetorObterNome), 
 				new BigDecimal(vetorObterNome[vetorObterNome.length - 1]));
 	}
+
+	private static void validarVetorNome(String[] vetorObterNome) throws AplicacaoException {
+		if(vetorObterNome.length == 1) {
+			throw new AplicacaoException("Linha Invalida");
+		}
+	}
 	
-	public static Cliente preencherCliente(String linha, String caractere) {
+	public static Cliente preencherCliente(String linha, String caractere) throws AplicacaoException {
 		String[] vetorObterCnpj = linha.split(caractere, 2);
 		String[] vetorObterNome = vetorObterCnpj[1].split(caractere);
+		
+		validarVetorNome(vetorObterNome);
 		
 		if(vetorObterNome.length == 2) {
 			return new Cliente(vetorObterCnpj[0], vetorObterNome[0], vetorObterNome[1]);
@@ -86,7 +98,16 @@ public class Util {
 		.orElseThrow(NoSuchElementException::new);
 	}
 	
-	public static boolean verificarMenorVenda(Venda menorVenda, Venda venda) {
-		return menorVenda == null || venda.getTotalVenda().compareTo(menorVenda.getTotalVenda()) > 0;
+	public static boolean verificarMaiorVenda(Venda maiorVenda, Venda venda) {
+		return maiorVenda == null || venda.getTotalVenda().compareTo(maiorVenda.getTotalVenda()) > 0;
+	}
+	
+	public static void verificarLinhaInvalida(String identificador, String linha) throws AplicacaoException {
+		if(Constantes.IDENTIFICADOR_VENDEDOR.equals(identificador)) {
+			preencherVendedor(linha, Constantes.CTE_LINHA);
+		} else if (Constantes.IDENTIFICADOR_CLIENTE.equals(identificador)) {
+			preencherCliente(linha, Constantes.CTE_LINHA);
+		}
+		
 	}
 }
