@@ -8,8 +8,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import br.com.fp.constantes.Constantes;
+import br.com.fp.exception.AplicacaoException;
 import br.com.fp.model.Cliente;
 import br.com.fp.model.Item;
 import br.com.fp.model.ItemQuantidade;
@@ -19,7 +22,7 @@ import br.com.fp.model.Vendedor;
 public class UtilTest {
 	
 	@Test
-	public void deveSerPossivelPreencherUmVendedor() {
+	public void deveSerPossivelPreencherUmVendedor() throws AplicacaoException {
 		String linha = "1234567891234çPeçadriçoç50000";
 		Vendedor vendedor = Util.preencherVendedor(linha, "ç");
 		
@@ -29,7 +32,7 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void deveSerPossivelPreencherUmCliente() {
+	public void deveSerPossivelPreencherUmCliente() throws AplicacaoException {
 		String linha = "2345675434544345çJose da SilvaçRural";
 		Cliente cliente = Util.preencherCliente(linha, "ç");
 		
@@ -127,7 +130,7 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void deveSerPossivelVerificarSeUmaVendaEMenorQueAOutra() {
+	public void deveSerPossivelVerificarSeUmaVendaEMaiorQueAOutra() {
 		Venda vendaA = new Venda(1, 
 				Arrays.asList(
 						new ItemQuantidade(new Item(1, BigDecimal.valueOf(10)), 1), 
@@ -142,8 +145,32 @@ public class UtilTest {
 						new ItemQuantidade(new Item(3, BigDecimal.valueOf(1000)), 3)), 
 				"B");
 		
-		assertTrue(Util.verificarMenorVenda(null, vendaA));
-		assertTrue(Util.verificarMenorVenda(vendaA, vendaB));
-		assertFalse(Util.verificarMenorVenda(vendaB, vendaA));
+		assertTrue(Util.verificarMaiorVenda(null, vendaA));
+		assertTrue(Util.verificarMaiorVenda(vendaA, vendaB));
+		assertFalse(Util.verificarMaiorVenda(vendaB, vendaA));
+	}
+	
+	@Test
+	public void deveSerPossivelVerificarUmaLinhaEstaInvalida() {
+		String linhaVA = "1234567891234çPedroç50000";
+		String linhaVB = "50000";
+		String linhaCA = "2345675433444345çEduardo PereiraçRural";
+		String linhaCB = "Eduardo Pereira,Rural";
+		
+		Assertions.assertDoesNotThrow(() -> {
+			Util.verificarLinhaInvalida(Constantes.IDENTIFICADOR_VENDEDOR, linhaVA);
+		});
+		
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			Util.verificarLinhaInvalida(Constantes.IDENTIFICADOR_VENDEDOR, linhaVB);
+		});
+		
+		Assertions.assertDoesNotThrow(() -> {
+			Util.verificarLinhaInvalida(Constantes.IDENTIFICADOR_CLIENTE, linhaCA);
+		});
+		
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			Util.verificarLinhaInvalida(Constantes.IDENTIFICADOR_CLIENTE, linhaCB);
+		});
 	}
 }
