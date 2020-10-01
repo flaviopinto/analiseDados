@@ -97,10 +97,16 @@ public class Resultado extends Base implements Serializable {
 	}
 	
 	public String getArquivoProcessado() {
-		return "Resultado [Total Clientes = " + (getTotalClientes() == null ? Constantes.NAO_IDENTIFICADO : getTotalClientes())
-			+ ", Total Vendedores = " + (getTotalVendedores() == null ? Constantes.NAO_IDENTIFICADO : getTotalVendedores())
-			+ ", Id Maior Venda = " + getIdMaiorVenda()
-			+ ", Pior Vendedor = " + getPiorVendedor() + "]";
+		StringBuilder retorno = new StringBuilder();
+		retorno.append("Resultado: Total Clientes = ");
+		retorno.append(getTotalClientes() == null ? Constantes.NAO_IDENTIFICADO : getTotalClientes());
+		retorno.append(" Total Vendedores = ");
+		retorno.append(getTotalVendedores() == null ? Constantes.NAO_IDENTIFICADO : getTotalVendedores());
+		retorno.append(" Id Maior Venda = ");
+		retorno.append(getIdMaiorVenda());
+		retorno.append(" Pior Vendedor = ");
+		retorno.append(getPiorVendedor());
+		return  retorno.toString();
 	}
 
 	@Override
